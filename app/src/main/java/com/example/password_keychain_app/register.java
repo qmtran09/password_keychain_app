@@ -105,7 +105,7 @@ public class register extends AppCompatActivity {
                     public void onComplete(@NonNull  Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             User user = new User(name1,emai);
-                            FirebaseDatabase.getInstance().getReference("User")
+                            FirebaseDatabase.getInstance("https://passwordkeychain-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -116,6 +116,7 @@ public class register extends AppCompatActivity {
                                     } else{
                                         Toast.makeText(register.this,"registration failed! Try again",Toast.LENGTH_LONG).show();
                                         progress.setVisibility(View.GONE);
+                                        System.out.println("no");
                                     }
                                 }
                             });
@@ -124,6 +125,7 @@ public class register extends AppCompatActivity {
                         } else{
                             Toast.makeText(register.this,"registration failed! Try again",Toast.LENGTH_LONG).show();
                             progress.setVisibility(View.GONE);
+                            System.out.println("yes");
 
                         }
                     }
