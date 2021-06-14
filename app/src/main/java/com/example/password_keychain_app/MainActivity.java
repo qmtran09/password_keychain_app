@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private String name;
     private String email;
     private String pk;
+    private EditText passwordS,usernameS,nameOfService;
+    private Button addLogin;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -51,9 +53,10 @@ public class MainActivity extends AppCompatActivity {
         db = FirebaseDatabase.getInstance("https://passwordkeychain-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference();
 
         banner = (TextView) findViewById(R.id.banner);
-
-
-
+        passwordS = (EditText) findViewById(R.id.passwordS);
+        usernameS = (EditText) findViewById(R.id.usernameS);
+        nameOfService = (EditText) findViewById(R.id.nameOfService);
+        addLogin = (Button) findViewById(R.id.addLogin);
 
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     email = u.email;
                     pk = u.pk;
 
+
                     banner.setText("Hi "+u.name+"!");
                     //if first time user generate public and private key
                     if(pk.equals("dummy")) {
@@ -88,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                         HashMap map = new HashMap();
                         map.put("email", name);
                         map.put("name", email);
-                        map.put("publicKey", publicKey);
+                        map.put("pk", publicKey);
 
                         db.child("Users").child(uID).updateChildren(map).addOnSuccessListener(new OnSuccessListener() {
                             @Override
@@ -110,6 +114,68 @@ public class MainActivity extends AppCompatActivity {
                         });
                         builder.show();
                     }
+
+                    addLogin.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String username = usernameS.getText().toString().trim();
+                            String password = passwordS.getText().toString().trim();
+                            String service = nameOfService.getText().toString().trim();
+                            if(username.isEmpty()){
+                                usernameS.setError("need username");
+                                usernameS.requestFocus();
+                                return;
+                            }
+                            if(password.isEmpty()){
+                                usernameS.setError("need password");
+                                usernameS.requestFocus();
+                                return;
+                            }
+                            if(service.isEmpty()){
+                                usernameS.setError("need name of service");
+                                usernameS.requestFocus();
+                                return;
+                            }
+                            encryptPassword encryptor =  new encryptPassword();
+
+
+                            db.child("Users").child(uID).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull  Task<DataSnapshot> task) {
+                                    if (!task.isSuccessful()) {
+                                        Log.e("firebase", "Error getting data", task.getException());
+                                    }
+                                    else {
+                                        Log.d("firebase", String.valueOf(task.getResult().getValue()));
+                                        u = task.getResult().getValue(User.class);
+                                        HashMap map2 = new HashMap();
+                                        String pk = u.pk;
+                                        String eUser = null;
+                                        String ePass = null;
+                                        try{
+                                            ePass = Base64.getEncoder().encodeToString(encryptor.encrypt(password, pk));
+                                            eUser = Base64.getEncoder().encodeToString(encryptor.encrypt(username, pk));
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+                                        LoginInfo login = new LoginInfo(eUser,ePass);
+                                        map2.put(service,login);
+
+                                        db.child("Users").child(uID).child("loginsMap").updateChildren(map2).addOnSuccessListener(new OnSuccessListener() {
+                                            @Override
+                                            public void onSuccess(Object o) {
+                                                Toast.makeText(MainActivity.this, "Successfully added login", Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+
+                                    }
+                                }
+                            });
+
+                        }
+                    });
+
+
 
                 }
             }
