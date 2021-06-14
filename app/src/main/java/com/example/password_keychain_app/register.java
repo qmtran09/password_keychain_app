@@ -3,6 +3,7 @@ package com.example.password_keychain_app;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -113,6 +114,7 @@ public class register extends AppCompatActivity {
                                     if(task.isSuccessful()){
                                         Toast.makeText(register.this,"User has been registered!",Toast.LENGTH_LONG).show();
                                         progress.setVisibility(View.GONE);
+                                        startActivity(new Intent(register.this,Login.class));
                                     } else{
                                         Toast.makeText(register.this,"registration failed! Try again",Toast.LENGTH_LONG).show();
                                         progress.setVisibility(View.GONE);
