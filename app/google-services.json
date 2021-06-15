@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "419218013623",
+    "project_id": "passwordkeychain",
+    "storage_bucket": "passwordkeychain.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:419218013623:android:a7f13829decb86dcdd3c32",
+        "android_client_info": {
+          "package_name": "com.example.password_keychain_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "419218013623-u5f5602n73en7e40edn1mg1s9m52gp7s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnJFkCucb8KgsC3LKRyCJen0c0YgxjrLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "419218013623-u5f5602n73en7e40edn1mg1s9m52gp7s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
