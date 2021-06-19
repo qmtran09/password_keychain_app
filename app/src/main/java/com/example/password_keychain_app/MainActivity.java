@@ -5,6 +5,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -27,6 +29,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
+import org.w3c.dom.Text;
+
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private String email;
     private String pk;
     private EditText passwordS,usernameS,nameOfService;
-    private Button addLogin;
+    private Button addLogin,seeLogin;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -57,7 +61,14 @@ public class MainActivity extends AppCompatActivity {
         usernameS = (EditText) findViewById(R.id.usernameS);
         nameOfService = (EditText) findViewById(R.id.nameOfService);
         addLogin = (Button) findViewById(R.id.addLogin);
+        seeLogin = (Button) findViewById(R.id.seeLogin);
 
+        seeLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,seeLogins.class));
+            }
+        });
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null){
@@ -101,10 +112,34 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
+                        TextView showText = new TextView(MainActivity.this);
+                        showText.setText(privatekey);
+                        showText.setTextIsSelectable(true);
+
+                        showText.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                // Copy the Text to the clipboard
+                                ClipboardManager manager =
+                                        (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                                TextView showTextParam = (TextView) v;
+                                ClipData clip = ClipData.newPlainText("pk",showTextParam.getText());
+                                manager.setPrimaryClip( clip );
+                                // Show a message:
+                                Toast.makeText(v.getContext(), "Copied Private Key, Please store securely!",
+                                        Toast.LENGTH_LONG)
+                                        .show();
+                                return true;
+
+                            }
+                        });
+
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                         builder.setCancelable(true);
                         builder.setTitle("This is your private key, please store securely. This key will not be shown again!");
-                        builder.setMessage(privatekey);
+                        builder.setView(showText);
+                        //builder.setMessage(privatekey);
+
 
                         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
