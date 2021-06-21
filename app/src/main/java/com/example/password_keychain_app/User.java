@@ -11,7 +11,7 @@ public class User {
 
     }
     public User(String name, String email,String pk){
-        LoginInfo dummy = new LoginInfo("dummy","dummy");
+        LoginInfo dummy = new LoginInfo("dummy","dummy","dummy");
         loginsMap.put("dummy",dummy);
         this.name = name;
         this.email = email;

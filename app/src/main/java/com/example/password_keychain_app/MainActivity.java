@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                         builder.setTitle("This is your private key, please store securely. This key will not be shown again!");
                         builder.setView(showText);
                         //builder.setMessage(privatekey);
+                       // System.out.println(privatekey);
 
 
                         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -185,15 +186,22 @@ public class MainActivity extends AppCompatActivity {
                                         u = task.getResult().getValue(User.class);
                                         HashMap map2 = new HashMap();
                                         String pk = u.pk;
+
+                                        if(u.loginsMap.containsValue("dummy")){
+                                            db.child("Users").child(uID).child("loginMaps").removeValue();
+                                        }
+
                                         String eUser = null;
                                         String ePass = null;
+                                        String eServ = null;
                                         try{
                                             ePass = Base64.getEncoder().encodeToString(encryptor.encrypt(password, pk));
                                             eUser = Base64.getEncoder().encodeToString(encryptor.encrypt(username, pk));
+                                            eServ = Base64.getEncoder().encodeToString(encryptor.encrypt(service, pk));
                                         }catch (Exception e){
                                             e.printStackTrace();
                                         }
-                                        LoginInfo login = new LoginInfo(eUser,ePass);
+                                        LoginInfo login = new LoginInfo(eUser,ePass,eServ);
                                         map2.put(service,login);
 
                                         db.child("Users").child(uID).child("loginsMap").updateChildren(map2).addOnSuccessListener(new OnSuccessListener() {
